@@ -14,7 +14,7 @@ The core idea is to determine if 3D depth information can be inferred solely fro
 ## Experimental Results
 **1. Control Test: The Sphere**  
 To validate the mathematical pipeline, we first tested a perfect sphere.
-- **Expectation**: A perfect linear or quadratic relationship.
+- **Expectation**: A near-perfect constant or linear relationship.
 - **Result**: The pipeline produced a near-perfect correlation curve, confirming that the coordinate transformations and metric extractions are correct.  
 ![Analysis Result](sphereAnalysis.png)
 
