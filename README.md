@@ -16,7 +16,7 @@ The core idea is to determine if 3D depth information can be inferred solely fro
 To validate the mathematical pipeline, we first tested a perfect sphere.
 - **Expectation**: A perfect linear or quadratic relationship.
 - **Result**: The pipeline produced a near-perfect correlation curve, confirming that the coordinate transformations and metric extractions are correct.  
-IMAGE OF SPHERE ANALYSIS
+![Analysis Result](sphereAnalysis.png)
 
 **2. Complex Morphology: The Cow**  
 We then applied the method to a non-convex organic shape (cow.obj) to reproduce the results described in the reference paper.
@@ -25,7 +25,7 @@ We then applied the method to a non-convex organic shape (cow.obj) to reproduce 
 - **Topological Separation**: Instead of a single continuous curve, the data clustered into distinct "shelves" corresponding to different body segments (Head, Torso, Rear Legs).
 - **Local vs. Global Linearity**: While individual body parts (like the torso) showed the expected positive slope (increasing depth with increasing width), the global relationship was disrupted by the empty space between limbs.
 - **Conclusion**: The results suggest that the simple "Eccentricity = Depth" hypothesis holds for locally convex segments but breaks down for global topology where occlusion occurs (e.g., legs obstructing the torso). This diverges from the smoother curves presented in the original study.  
-IMAGE OF COW ANALYSIS
+![Analysis Result](Cow_Analysis_Screenshot.png)
 ## Tech Stack
 - **Language**: Python 3.10+
 - **Rendering**: Pyrender (EGL Backend for headless rendering)
