@@ -41,7 +41,7 @@ def loadNormalizedMesh(objectPath: str) -> trimesh.Trimesh:
   # 1. Load mesh from path
   loaded_data = trimesh.load(objectPath)
 
-  # loaded_data = trimesh.creation.icosphere()
+  loaded_data = trimesh.creation.icosphere()
 
   # Unwrap scene if multiple objects
   # THIS SHOULDN"T HAPPEN since the .obj files should
@@ -227,12 +227,56 @@ def extract_features(image_2d, depth_map):
     "data_y": rim_depth         # The Depth values
   }
 
+def plot_binned_trend(features):
+  """
+  Collapses the noisy scatter plot into a clean trend line by 
+  calculating the average Depth for each Eccentricity 'bin'.
+  """
+  x = features['data_x']
+  y = features['data_y']
+  
+  # 1. Create Bins (0.0 to 1.0 with step 0.02)
+  bins = np.arange(0, np.max(x) + 0.02, 0.02)
+  
+  # 2. Calculate the Mean Depth for each bin
+  # 'digitize' tells us which bin each pixel belongs to
+  indices = np.digitize(x, bins)
+  
+  mean_depths = []
+  mean_ecc = []
+  
+  for i in range(1, len(bins)):
+    # Find all points in this bin
+    mask = indices == i
+    if np.sum(mask) > 0:
+      # Calculate mean depth for this slice
+      mean_depths.append(np.mean(y[mask]))
+      # Calculate mean eccentricity (center of bin)
+      mean_ecc.append(bins[i-1] + 0.01)
+          
+  # 3. Plot it
+  plt.figure(figsize=(10, 6))
+  
+  # Background: The Raw Scatter (faint)
+  plt.scatter(x, y, alpha=0.1, s=1, c='gray', label='Raw Data (Pixels)')
+  
+  # Foreground: The Trend Line
+  plt.plot(mean_ecc, mean_depths, 'r-', linewidth=3, marker='o', label='Mean Trend (Paper Style)')
+  
+  # Aesthetics
+  plt.title("Binned Trend: Eccentricity vs Depth")
+  plt.xlabel("Squared Eccentricity (r^2)")
+  plt.ylabel("Depth (Z)")
+  plt.legend()
+  plt.grid(True, alpha=0.3)
+  plt.show(block=True)
+
 def objectAnalyzer(objectPath: str):
   # 1. Load Data
   normalizedMesh = loadNormalizedMesh(objectPath)
 
   # 2. Define Camera (Isometric-ish view)
-  cam_position = [-0.75, -0.3, 0.7]
+  cam_position = [1.2, 0.3, 0.3]
   
   # 3. Render
   image_2d, depth_map_ground_truth = render_mesh(normalizedMesh, eye_pos=cam_position)
@@ -287,11 +331,13 @@ def objectAnalyzer(objectPath: str):
 
   plt.tight_layout()
   plt.show(block=True)
+
+  plot_binned_trend(features)
   
   return features
 
 def main():
-  mesh_path = "./objects/drill.obj"
+  mesh_path = "./objects/cow.obj" # Change to use different objects
 
   objectAnalyzer(mesh_path)
 
